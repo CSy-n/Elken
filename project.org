@@ -1,0 +1,77 @@
+* XLite
+
+
+* Simple LUA Usage
+
+<<
+local answer
+repeat
+   io.write("continue with this operation (y/n)? ")
+   io.flush()
+   answer=io.read()
+until answer=="y" or answer=="n"
+>>
+
+
+Binary Search Path:
+ Requires adjusting the preload path:
+<<
+
+Error: [string "local core..."]:8: module 'core' not found:
+	no field package.preload['core']
+	no file '/home/brody/base/Laboratory/C/Application/data/core/init.lua'
+	no file '/home/brody/base/Laboratory/C/Application/data/core.lua'
+	no file '/usr/local/share/lua/5.2/core.lua'
+	no file '/usr/local/share/lua/5.2/core/init.lua'
+	no file '/usr/local/lib/lua/5.2/core.lua'
+	no file '/usr/local/lib/lua/5.2/core/init.lua'
+	no file './core.lua'
+	no file '/usr/local/lib/lua/5.2/core.so'
+	no file '/usr/local/lib/lua/5.2/loadall.so'
+	no file './core.so'
+stack traceback:
+	[C]: in function 'require'
+	[string "local core..."]:8: in function <[string "local core..."]:2>
+	[C]: in function 'xpcall'
+	[string "local core..."]:2: in main chunk
+>>
+
+
+
+
+
+** ChangeLog ::
+
+ -- Changed Treeview to Right-side:
+  X:/
+  data/plugins/treeiview.lua::188#node:split("right", view, true)
+
+
+
+** Progression of Learning
+
+ Attempt to: create inline evaluation :
+  -- Search Project for usage: "core.active_view"
+   ax-find-files: '*.lua' 'core.active_view'
+
+ Found possible link to hiearchy chain
+  -- No luck
+
+ Alternate Strategy:
+  Search: "core.active_view.doc"
+  Match:
+  core/rootview.lua:483:function RootView:on_text_input(...)
+  core/rootview.lua:484:  core.active_view:on_text_input(...)
+  core/doc/init.lua:335:function Doc:text_input(text)
+
+
+
+ --- Quest: Command to get word under cursor?
+  doc:select-word
+
+
+
+* References:
+https://github.com/a327ex/blog/issues/56 :: Blog on VIM Modal Editing
+
+
