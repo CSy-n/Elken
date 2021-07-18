@@ -58,7 +58,7 @@ function core.init()
   local node = core.root_view:get_active_node()
   node:add_view(core.canvas_view)
 --   core.root_view.root_node:split("down", core.canvas_view, true)
---   core.root_view:open_doc(core.open_doc(EXEDIR .. "/data/user/init.lua"))
+  core.root_view:open_doc(core.open_doc(EXEDIR .. "/data/user/init.lua"))
   core.window_title = '.'
 
 --   local confirm = system.show_confirm_dialog("Unsaved Changes", ">")
@@ -112,15 +112,16 @@ function core.step()
     core.try(core.on_event, "mousemoved", mouse.x, mouse.y, mouse.dx, mouse.dy)
   end
 
+-- Ax: <Entry>
 --    update window title
   if core.window_title and string.len(core.window_title) > 100 then
     system.set_window_title('.')
     core.window_title = '.'
   else
---     if title == nil then core.window_title = '.' end
-    system.set_window_title(core.window_title .. '@')
+    if title == nil then core.window_title = '@' end
+    system.set_window_title(core.window_title .. '#')
 --     print('.', core.window_title, string.len(core.window_title))
-    core.window_title = core.window_title .. '.'
+    core.window_title = core.window_title .. '#'
   end
 
   local width, height = renderer.get_size()
@@ -136,8 +137,22 @@ function core.step()
   core.clip_rect_stack[1] = { 0, 0, width, height }
   renderer.set_clip_rect(table.unpack(core.clip_rect_stack[1]))
   core.root_view:draw()
-  renderer.draw_text(style.font, "Apples & Oranges; Playing with letters & Numbers.", 50, 50, style.text)
+-- Ax: <Entry>
+--   renderer.draw_text(style.font, "Apples & Oranges; Playing with letters & Numbers.", 50, 50, style.text)
   renderer.end_frame()
+
+-- --   print(">")
+--   local time = system.get_time()
+--   elapsed_time = time - last_time
+--   last_time = time
+
+-- --   print(time)
+
+-- --   io.write(">")
+--   -- Update new status
+--   renderer.draw_rect(100 + elapsed_time / 100, 100, 300, 300, style.line_highlight)
+
+
 
   return true
 end
@@ -157,9 +172,10 @@ function core.run()
     if not did_redraw and not system.window_has_focus() then
       system.wait_event(0.25)
     end
-    if system.get_time() - start_time > 3.5 then
-      core.quit(true)
-    end
+    -- Ax: <Exit Time>
+--     if system.get_time() - start_time > 3.0 then
+--       core.quit(true)
+--     end
 --     Check elapsed time and resolve to FPS
     local elapsed = system.get_time() - core.frame_start
     system.sleep(math.max(0, 1 / 50 - elapsed))
