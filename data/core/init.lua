@@ -5,8 +5,6 @@ local Doc
 
 local core = {}
 
-
-
 local function log(icon, icon_color, fmt, ...)
   local text = string.format(fmt, ...)
   if icon then
@@ -56,7 +54,7 @@ function core.init()
   core.threads = setmetatable({}, { __mode = "k" })
   core.project_files = {}
   core.redraw = true
-
+-- Ax: <Establish Commands>
   command.add_defaults()
 
   local got_plugin_error = not core.load_plugins()
@@ -72,6 +70,13 @@ function core.init()
   local doc_view = DocView(doc)
   core.root_view.root_node:split("right", doc_view)
 
+  local predefined_imports = '\
+  local core = require "core"\
+  local style = require "core.style"\
+  local command = require "core.command"\
+  local common = require "core.common"\
+  local config = require "core.config"\n'
+
   command.add("core.docview", {
     ["eval:evaluate_right"] = function()
       self = core.active_view.doc
@@ -85,7 +90,7 @@ function core.init()
       end
       local str = self:get_text(line1, col1, line2, col2)
 
-      local fn, err = load("return " .. str)
+      local fn, err = load(predefined_imports .."return " .. str)
       if not fn then fn, err = load(str) end
       assert(fn, err)
       res = tostring(fn())
