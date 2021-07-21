@@ -41,9 +41,13 @@ function core.open_doc(filename)
 end
 
 function core.init()
+  command = require "core.command"
+  keymap = require "core.keymap"
   RootView = require "core.rootview"
   CanvasView = require "core.canvasview"
   Doc = require "core.doc"
+  DocView = require "core.docview"
+  View = require "core.view"
 
   core.frame_start = 0
   core.clip_rect_stack = {{ 0,0,0,0 }}
@@ -53,12 +57,57 @@ function core.init()
   core.project_files = {}
   core.redraw = true
 
+  command.add_defaults()
+
+  local got_plugin_error = not core.load_plugins()
+
+  if got_plugin_error then
+    command.perform("core:open-log")
+  end
+
   core.root_view = RootView()
+  core.root_view:open_doc(core.open_doc(EXEDIR .. "/data/user/init.lua"))
+
+  local doc = core.open_doc()
+  local doc_view = DocView(doc)
+  core.root_view.root_node:split("right", doc_view)
+
+  command.add("core.docview", {
+    ["eval:evaluate_right"] = function()
+      self = core.active_view.doc
+
+      local line1, col1, line2, col2, swap
+      local had_selection = self:has_selection()
+      if had_selection then
+        line1, col1, line2, col2, swap = self:get_selection(true)
+      else
+        line1, col1, line2, col2 = 1, 1, #self.lines, #self.lines[#self.lines]
+      end
+      local str = self:get_text(line1, col1, line2, col2)
+
+      local fn, err = load("return " .. str)
+      if not fn then fn, err = load(str) end
+      assert(fn, err)
+      res = tostring(fn())
+
+      doc:reset()
+      doc:text_input(res)
+    end
+  })
+
+  keymap.add {
+    ["ctrl+k"] = "eval:evaluate_right"
+  }
+
+  --[[
   core.canvas_view = CanvasView()
   local node = core.root_view:get_active_node()
   node:add_view(core.canvas_view)
---   core.root_view.root_node:split("down", core.canvas_view, true)
+  core.root_view.root_node:split("down", core.canvas_view, true)
   core.root_view:open_doc(core.open_doc(EXEDIR .. "/data/user/init.lua"))
+  --]]
+
+
   core.window_title = '.'
 
 --   local confirm = system.show_confirm_dialog("Unsaved Changes", ">")
@@ -238,6 +287,20 @@ function core.quit(force)
     os.exit()
 end
 
+function core.load_plugins()
+  local no_errors = true
+  local files = system.list_dir(EXEDIR .. "/data/plugins")
+  for _, filename in ipairs(files) do
+    local modname = "plugins." .. filename:gsub(".lua$", "")
+    local ok = core.try(require, modname)
+    if ok then
+      core.log_quiet("Loaded plugin %q", modname)
+    else
+      no_errors = false
+    end
+  end
+  return no_errors
+end
 
 function core.set_active_view(view)
   assert(view, "Tried to set active view to nil")
