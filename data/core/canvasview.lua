@@ -35,7 +35,8 @@ function CanvasView:update()
   last_time = time
 
   -- Update new status
-  renderer.draw_rect(100 + elapsed_time * 100000, 100, 300, 300, style.line_highlight)
+--   renderer.draw_rect(500, 500, 200, 200, style.background1)
+--   renderer.draw_rect(100 + elapsed_time * 100000, 100, 300, 300, style.line_highlight)
 --   print(elapsed_time)
 
   self:move_towards("yoffset", 0)
@@ -56,11 +57,10 @@ end
 
 -- Ax: <Entry>: Drawing via Canvas
 function CanvasView:draw()
---   self:draw_background(style.background)
-
+  self:draw_background(style.background)
 
   -- Display Rectangle: [X-Coord, Y-Coord, Width, Height, Color]
-  renderer.draw_rect(100, 100, 300, 300, style.line_highlight)
+  renderer.draw_rect(800, 200, 300, 300, style.background2)
 
   -- Display Text: [Font, Text, X-Coord, Y-Coord, Color]
 --   renderer.draw_text(style.font, "Marmalade & Pickles - make your choice; .", 150, 150, style.line_number2)

@@ -67,7 +67,7 @@ function core.init()
   core.root_view:open_doc(core.open_doc(EXEDIR .. "/data/user/init.lua"))
 
   local doc = core.open_doc()
-  local doc_view = DocView(doc)
+  local doc_view = CanvasView(doc)
   core.root_view.root_node:split("right", doc_view)
 
   local predefined_imports = '\
@@ -100,8 +100,10 @@ function core.init()
     end
   })
 
+-- Ax: <Keymap eval:evaluate_right>
   keymap.add {
-    ["ctrl+k"] = "eval:evaluate_right"
+    ["ctrl+k"] = "eval:evaluate_right",
+    ["ctrl+q"] = "core:quit"
   }
 
   --[[
@@ -172,10 +174,10 @@ function core.step()
     system.set_window_title('.')
     core.window_title = '.'
   else
-    if title == nil then core.window_title = '@' end
-    system.set_window_title(core.window_title .. '#')
---     print('.', core.window_title, string.len(core.window_title))
-    core.window_title = core.window_title .. '#'
+    if title == nil then core.window_title = '.' end
+      system.set_window_title(core.window_title .. '.')
+--    print('.', core.window_title, string.len(core.window_title))
+      core.window_title = core.window_title .. '.'
   end
 
   local width, height = renderer.get_size()
@@ -205,8 +207,6 @@ function core.step()
 -- --   io.write(">")
 --   -- Update new status
 --   renderer.draw_rect(100 + elapsed_time / 100, 100, 300, 300, style.line_highlight)
-
-
 
   return true
 end
