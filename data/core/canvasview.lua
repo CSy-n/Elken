@@ -60,7 +60,7 @@ function CanvasView:draw()
   self:draw_background(style.background)
 
   -- Display Rectangle: [X-Coord, Y-Coord, Width, Height, Color]
-  renderer.draw_rect(800, 200, 300, 300, style.background2)
+  -- renderer.draw_rect(800, 200, 300, 300, style.background2)
 
   -- Display Text: [Font, Text, X-Coord, Y-Coord, Color]
 --   renderer.draw_text(style.font, "Marmalade & Pickles - make your choice; .", 150, 150, style.line_number2)
