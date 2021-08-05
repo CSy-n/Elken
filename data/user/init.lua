@@ -19,10 +19,18 @@ for k,v in pairs(renderer.font) do print(k,v) end
 core.clip_rect_stack[1]
 renderer.font
 
-renderer.draw_rect(500, 500, 200, 200, style.background2)
+
 
 function DocView:draw()
   DocView.super.draw(self)
   -- core.root_view:defer_draw(draw_suggestions_box, self)
   
 end
+
+core.canvas.draw_callbacks = {}
+
+for i=1, 5 do
+  core.canvas:draw_later(renderer.draw_rect, 1700, i*200, 100, 100, style.background2)
+end
+
+

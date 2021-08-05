@@ -47,6 +47,22 @@ function core.init()
   DocView = require "core.docview"
   View = require "core.view"
 
+  local old_draw = CanvasView.draw
+
+  CanvasView.draw = function (self)
+    old_draw(self)
+    if self.draw_callbacks then
+      for _, t in ipairs(self.draw_callbacks) do
+        t.fn(table.unpack(t.args))
+      end
+    end
+  end
+
+  CanvasView.draw_later = function (self, fn, ...)
+    self.draw_callbacks = self.draw_callbacks or {}
+    table.insert(self.draw_callbacks, { fn = fn, args = { ... } })
+  end
+
   core.frame_start = 0
   core.clip_rect_stack = {{ 0,0,0,0 }}
   core.log_items = {}
@@ -70,6 +86,12 @@ function core.init()
   local doc_view = CanvasView(doc)
   core.root_view.root_node:split("right", doc_view)
 
+  -- doc_view:draw_later(renderer.draw_rect, 1200, 200, 300, 300, style.background2)
+
+  -- doc_view:draw_later(renderer.draw_text, style.font, "Marmalade & Pickles - make your choice; .", 1200, 150, style.line_number2)
+
+  core.canvas = doc_view
+  
   local predefined_imports = '\
   local core = require "core"\
   local style = require "core.style"\
